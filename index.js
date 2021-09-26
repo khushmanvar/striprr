@@ -4,7 +4,7 @@ const TelegramBot = require("node-telegram-bot-api")
 const { getUnixTime, endOfMonth, startOfMonth } = require("date-fns")
 
 const REPO_GITHUB_ACTIONS_LINK =
-  "https://github.com/jsjoeio/twitter-stripe-mrr/actions"
+  "https://github.com/khushmanvar/striprr/actions"
 const EXPECTED_ENV_VARS = [
   "TWITTER_CONSUMER_KEY",
   "TWITTER_CONSUMER_SECRET",
@@ -190,26 +190,12 @@ function getEnvironmentVariable(name, required = true) {
   return process.env[name]
 }
 
-/**
- * Formats a number to have a K or not
- * @param {number} num the number to format
- * @returns {string} the `num` formatted with "K"
- * @example kFormatter(5000) => 5K
- * @link https://stackoverflow.com/a/9461657/3015595 for more information
- */
 function kFormatter(num) {
   return Math.abs(num) > 999
     ? Math.sign(num) * (Math.abs(num) / 1000).toFixed(1) + "K"
     : Math.sign(num) * Math.abs(num)
 }
 
-/**
- * Verifies your Twitter credentials
- * @param client The Twitter client
- * @returns {undefined}
- *
- * See this {@link https://dev.to/deta/how-i-used-deta-and-the-twitter-api-to-update-my-profile-name-with-my-follower-count-tom-scott-style-l1j| Twitter tutorial} for more information about working with the Twitter API
- */
 async function verifyTwitterCredentials(client) {
   return await client.get("account/verify_credentials", (err, res) => {
     if (err) {
@@ -224,15 +210,6 @@ async function verifyTwitterCredentials(client) {
   })
 }
 
-/**
- * Updates the location in the Twitter bio
- *
- * @param {any} twitter - the Twitter client
- * @param {{location: string}} twitterProfileParams - the twitter profile parameters
- * @param {() => void} errCallback - callback function that's called when an error happens
- * @param {() => void} successCallback - callback function that's called when it succeeds
- * @returns {undefined}
- */
 async function updateTwitterBioLocation(
   twitter,
   twitterProfileParams,
@@ -255,13 +232,6 @@ async function updateTwitterBioLocation(
   )
 }
 
-/**
- * Verifies your Stripe credentials
- * @param client The Stripe client
- * @returns {undefined}
- *
- * See this {@link https://stripe.com/docs/development/quickstart| Stripe tutorial} for more information
- */
 async function verifyStripeCredentials(client) {
   return await client.paymentIntents.create(
     {
@@ -293,24 +263,16 @@ const iconsTypes = {
   circle: { green: "🟢", yellow: "🟡", gray: "⚪" },
 }
 
-/**
- * @param {number} n - the progress towards goal out of 10
- * @param {string} icon - the progress Icon (square or circle)
- * @example there are ten squares total, and n is 5, then it should return
- * "MRR: 0 🟩🟩🟩🟩🟩🟨⬜⬜⬜⬜  5K" or "MRR: 0 🟢🟢🟢🟢🟢🟡⚪⚪⚪⚪  5K"
- */
 function buildMRRIconsForTwitter(n, goal, icon = "square") {
   const GOAL_AS_K = kFormatter(goal)
   let SQUARES = ""
   let count = 0
 
-  // Add green squares
   for (let i = 0; i < n; i++) {
     SQUARES += iconsTypes[icon].green
     count += 1
   }
 
-  // Add one after the last green for progress
   if (count !== 10) {
     SQUARES += iconsTypes[icon].yellow
     count += 1
@@ -327,14 +289,6 @@ function buildMRRIconsForTwitter(n, goal, icon = "square") {
   return `MRR: 0 ${SQUARES} ${GOAL_AS_K}`
 }
 
-/**
- * Calculates the total monthly revenue in Stripe
- *
- * @param {any} stripe - the stripe client
- * @param {number} startRangeTimestamp - the start range of the month
- * @param {number} endRangeTimestamp - the end range of the month
- * @returns {number} the total
- */
 async function getStripeRevenue(
   stripe,
   startRangeTimestamp,
