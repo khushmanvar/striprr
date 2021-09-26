@@ -11,7 +11,7 @@ const EXPECTED_ENV_VARS = [
   "TWITTER_ACCESS_TOKEN_KEY",
   "TWITTER_ACCESS_TOKEN_SECRET",
   "STRIPE_API_KEY",
-  "GOAL",
+  "GOAL"
 ]
 
 let dryRun = false
